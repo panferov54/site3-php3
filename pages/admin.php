@@ -82,7 +82,7 @@ if (!isset($_POST['addbtn'])){
         <hr>
         <div class="form-group">
             <label for="imagepath">Фото товара:
-                <input type="file" multiple accept="image/*" name="imagepath" id="imagepath">
+                <input type="file" multiple accept="image/*" name="imagepath[]" id="imagepath">
             </label>
         </div>
         <div class="form-group">
@@ -95,12 +95,24 @@ if (!isset($_POST['addbtn'])){
 </div>
 <?php
 } else {
-    if(is_uploaded_file($_FILES['imagepath']['tmp_name'])){
-        $path="images/goods/".$_FILES['imagepath']['name'];
-        move_uploaded_file($_FILES['imagepath']['tmp_name'],$path);
-    }
+
+    foreach ($_FILES['imagepath']['name'] as $k=>$v) {
+        if (is_uploaded_file($_FILES['imagepath']['tmp_name'][$k] !== 0)) {
+            echo '<script>alert("Upload file error"' . $v . ')</script>';
+            continue;
+        } else {
+            $path = "images/goods/" . $_FILES['imagepath']['name'][$k];
+            move_uploaded_file($_FILES['imagepath']['tmp_name'][$k], $path);
+        }
     $item=new Item (trim($_POST['name']),$_POST['catid'],$_POST['pricein'],$_POST['pricesale'],$_POST['info'],$path,$_POST['rezerv']);
     $item->intoDb();
+    }
+//    if(is_uploaded_file($_FILES['imagepath']['tmp_name'])){
+//        $path="images/goods/".$_FILES['imagepath']['name'];
+//        move_uploaded_file($_FILES['imagepath']['tmp_name'],$path);
+//    }
+//    $item=new Item (trim($_POST['name']),$_POST['catid'],$_POST['pricein'],$_POST['pricesale'],$_POST['info'],$path,$_POST['rezerv']);
+//    $item->intoDb();
 }
 
 
